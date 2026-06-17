@@ -1,0 +1,6 @@
+.agent
+.venv
+data/
+docs/
+data.zip
+*.pt
