@@ -1,6 +1,9 @@
 .agent
 .venv
-data/
+data/antibiotic_smiles_data
+data/fna_data
+data/amr_genes_aligned.zip
+data/amr_genes_aligned
 docs/
 data.zip
 *.pt

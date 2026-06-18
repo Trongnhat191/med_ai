@@ -25,17 +25,28 @@ def _p(env_key: str, default: Path) -> Path:
     return Path(val) if val else default
 
 ROOT      = _p("MIC_ROOT",       Path(__file__).parent.parent)
-DATA_DIR  = _p("MIC_DATA_DIR",   ROOT / "data")
-FNA_DIR   = _p("MIC_FNA_DIR",    DATA_DIR / "fna_data" / "raw_data")
-DATA_MAP  = _p("MIC_DATA_MAP",   DATA_DIR / "fna_data" / "data_map.csv")
-SMILES_CSV= _p("MIC_SMILES_CSV", DATA_DIR / "antibiotic_smiles_data"
-                                           / "antibiotic_smiles_20_drugs.csv")
+DATA_DIR      = _p("MIC_DATA_DIR",      ROOT / "data")
+FNA_DIR       = _p("MIC_FNA_DIR",       DATA_DIR / "fna_data" / "raw_data")
+DATA_MAP      = _p("MIC_DATA_MAP",      DATA_DIR / "fna_data" / "data_map.csv")
+SMILES_CSV    = _p("MIC_SMILES_CSV",   DATA_DIR / "antibiotic_smiles_data"
+                                                 / "antibiotic_smiles_20_drugs.csv")
+AMR_ALIGNED_DIR = _p("MIC_AMR_ALIGNED", DATA_DIR / "amr_genes_aligned")
 
 # ---- Genome encoder (NTv3) ------------------------------------------------
 GENOME_MODEL   = "InstaDeepAI/NTv3_100M_pre"
+
+# ---- Genome source: 'fna' (whole genome contigs) or 'amr' (AMR gene slots) ----
+# 'amr' uses the pre-aligned AMR gene files in AMR_ALIGNED_DIR — sharper signal
+GENOME_SOURCE  = "amr"   # switch to 'fna' to revert to whole-genome mode
+
+# fna mode: pick top-N largest contigs from the .fna file
 TOP_N_CONTIGS  = 3
-# 65 536 = 512 * 128  — safe on T4 16 GB with NTv3's U-Net downsampling
+# 65 536 = 512 * 128 — safe on T4 16 GB with NTv3's U-Net downsampling
 MAX_CONTIG_LEN = 65536
+
+# amr mode: each AMR gene slot is short (~500–2000 nt); all slots are encoded
+AMR_MIN_GENE_LEN = 100   # ignore slots shorter than this (mostly-N regions)
+
 GENOME_EMB_DIM = 768
 
 # ---- SMILES encoder (ChemBERTa) -------------------------------------------
